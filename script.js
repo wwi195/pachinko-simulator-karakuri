@@ -233,7 +233,7 @@ function runRushSpin(opts = {}) {
     game.rushAllStats.ichigeki++;
     // 保留5個の結果は先に決めておき、画面で1個ずつ開ける
     game.pending = { spins, result: rollIchigeki(), opened: 0 };
-    addLog(`ST${spins}回転目で一劇発生！`, 'rush');
+    addLog(`ST${spins}回転目で運命の一劇！`, 'rush');
     setState('ichigeki');
     return true;
   }
@@ -675,12 +675,12 @@ function roundsText(nominal) {
   return nominal >= 3000 ? `<p class="judge-label">10R×${nominal / 1500}</p>` : '';
 }
 
-// 「1500ボーナス！」と大きく出し、下に小さく（実質獲得 1,400）。からくりチャージは「チャージ！」。
+// 「1500ボーナス！」と大きく出し、下に小さく（実質獲得 1,400）。からくりチャージは見出しだけ（大きい表記なし）。
 // label はその上に小さく出す見出し（任意）
 function bonusBox(label, nominal, cls = 'standard', sub = '', charge = false) {
   return `<div class="vibun-box rush-box">
     ${label ? `<p class="bonus-label">${label}</p>` : ''}
-    <p class="bonus-main ${cls}">${charge ? 'チャージ！' : `${nominal}ボーナス！`}</p>
+    ${charge ? '' : `<p class="bonus-main ${cls}">${nominal}ボーナス！</p>`}
     <p class="bonus-sub">（実質獲得 ${toActualBalls(nominal).toLocaleString()}）</p>
     ${sub}
   </div>`;
@@ -762,7 +762,7 @@ function buildScreen(state) {
     case 'ichigeki': {
       const hits = p.result.holds.slice(0, p.opened).filter(Boolean).length;
       return `<div class="screen">
-        <p class="judge-win">一劇発生！</p>
+        <p class="judge-win">運命の一劇</p>
         <p class="result-sub">ST${p.spins}回転目 ／ 保留${ICHIGEKI_HOLDS}個で勝負</p>
         ${holdsHtml(p)}
         <p class="result-sub">今の当たり ${hits}個（${(hits * HOLD_BALLS).toLocaleString()}個）</p>
