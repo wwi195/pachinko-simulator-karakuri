@@ -224,6 +224,23 @@ function enterRush() {
   setState('rush_idle');
 }
 
+// 運命の一劇の前に「リーチ！ 4○4」を出す（真ん中は薄く数字が回る）。少ししたら一劇へ
+const ICHIGEKI_REACH_MS = 2200;
+function showIchigekiReach() {
+  setState('ichigeki_reach');
+  const mid = document.getElementById('reach-mid');
+  let n = Math.floor(Math.random() * 10);
+  const timer = setInterval(() => {
+    if (!mid.isConnected) { clearInterval(timer); return; }
+    n = (n + 1) % 10;
+    mid.textContent = n;
+  }, 70);
+  setTimeout(() => {
+    clearInterval(timer);
+    if (game.state === 'ichigeki_reach') setState('ichigeki');
+  }, ICHIGEKI_REACH_MS);
+}
+
 // 1回転処理。画面遷移が起きたら true を返す
 function runRushSpin(opts = {}) {
   game.rushAllStats.totalSpins++;
@@ -234,7 +251,7 @@ function runRushSpin(opts = {}) {
     // 保留5個の結果は先に決めておき、画面で1個ずつ開ける
     game.pending = { spins, result: rollIchigeki(), opened: 0 };
     addLog(`ST${spins}回転目で運命の一劇！`, 'rush');
-    setState('ichigeki');
+    showIchigekiReach();
     return true;
   }
   if (game.stRemaining <= 0) {
@@ -758,6 +775,14 @@ function buildScreen(state) {
 
     case 'rush_idle':
       return rushIdleScreen();
+
+    case 'ichigeki_reach':
+      return `<div class="screen reach-screen">
+        <p class="reach-title">リーチ！</p>
+        <div class="reach-line">
+          <span class="reach-4">4</span><span class="reach-mid" id="reach-mid">0</span><span class="reach-4">4</span>
+        </div>
+      </div>`;
 
     case 'ichigeki': {
       const hits = p.result.holds.slice(0, p.opened).filter(Boolean).length;

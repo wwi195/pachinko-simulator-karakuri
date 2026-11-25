@@ -737,3 +737,36 @@ body {
 .hold.closed { background: #f3ece0; color: #b8a888; }
 .hold.hit { background: radial-gradient(circle, #ffe680, #d4a017); color: var(--c-ruri); box-shadow: 0 0 12px rgba(212,160,23,0.8); }
 .hold.miss { background: #ddd; color: #888; border-color: #bbb; }
+
+/* ---- 運命の一劇の前のリーチ表示「リーチ！ 4○4」 ---- */
+.reach-screen {
+  justify-content: center; text-align: center; min-height: 260px;
+  background: radial-gradient(ellipse at center, #3a1450 0%, #170a22 60%, #0b0510 100%);
+  border-radius: 14px; padding: 24px 0;
+}
+.reach-title {
+  font-size: 34px; font-weight: 900; letter-spacing: 4px;
+  color: #fff; text-shadow: 0 0 10px #c34dff, 0 0 2px #5a1196;
+  margin-bottom: 8px;
+  animation: reach-blink 0.6s ease-in-out infinite alternate;
+}
+@keyframes reach-blink { from { opacity: 1; } to { opacity: 0.55; } }
+.reach-line { display: flex; align-items: center; justify-content: center; gap: 22px; }
+/* 紫の「4」：ピンク紫〜深い紫のグラデ、白フチ＋黒フチ、斜体で太く */
+.reach-4 {
+  font-family: 'Arial Black', 'Hiragino Kaku Gothic ProN', sans-serif;
+  font-size: 104px; font-weight: 900; font-style: italic; line-height: 1;
+  background: linear-gradient(160deg, #f27bff 0%, #c13cf0 35%, #8a22d8 65%, #5b11a8 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  -webkit-text-stroke: 3px #fff;
+  filter: drop-shadow(0 0 1px #1a0626) drop-shadow(0 0 2px #1a0626) drop-shadow(0 0 3px #1a0626) drop-shadow(0 0 12px rgba(200, 70, 255, 0.75));
+  transform: skewX(-6deg);
+}
+/* 真ん中：薄く数字が回る */
+.reach-mid {
+  display: inline-block; width: 0.7em; text-align: center;
+  font-family: 'Arial Black', sans-serif; font-size: 80px; font-weight: 900; line-height: 1;
+  color: rgba(255, 255, 255, 0.28);
+  filter: blur(1.5px);
+}
+@media (prefers-reduced-motion: reduce) { .reach-title { animation: none; } }
