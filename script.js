@@ -224,8 +224,8 @@ function enterRush() {
   setState('rush_idle');
 }
 
-// 運命の一劇の前に「リーチ！ 4○4」を出す（真ん中は薄く数字が回る）。少ししたら一劇へ
-const ICHIGEKI_REACH_MS = 2200;
+// 運命の一劇の前に「リーチ！ 4○4」を出す（真ん中は薄く数字が回る）。1秒で一劇へ
+const ICHIGEKI_REACH_MS = 1000;
 function showIchigekiReach() {
   setState('ichigeki_reach');
   const mid = document.getElementById('reach-mid');
