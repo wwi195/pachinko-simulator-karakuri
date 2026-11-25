@@ -786,3 +786,57 @@ body {
   100% { transform: skewX(-6deg) translateY(0); }
 }
 @media (prefers-reduced-motion: reduce) { .reach-title.show, .reach-4.reach-fall { animation: none; } }
+
+/* ---- 一劇の当たり保留：虹煙エフェクト ---- */
+.hold.hit-new { position: relative; z-index: 2; animation: hold-hit-pop 0.6s ease-out, hold-rainbow-glow 0.8s linear 0.6s 2; }
+@keyframes hold-hit-pop {
+  0%   { transform: scale(0.4) rotate(-20deg); }
+  60%  { transform: scale(1.45) rotate(8deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+@keyframes hold-rainbow-glow {
+  0%   { box-shadow: 0 0 18px 6px #ff4d4d; }
+  20%  { box-shadow: 0 0 18px 6px #ffb84d; }
+  40%  { box-shadow: 0 0 18px 6px #fff04d; }
+  60%  { box-shadow: 0 0 18px 6px #4dff88; }
+  80%  { box-shadow: 0 0 18px 6px #4dc3ff; }
+  100% { box-shadow: 0 0 18px 6px #c04dff; }
+}
+.rainbow-smoke { position: absolute; width: 0; height: 0; pointer-events: none; z-index: 1; }
+.rainbow-smoke .puff {
+  position: absolute; left: -32px; top: -32px; width: 64px; height: 64px; border-radius: 50%;
+  background: radial-gradient(circle, hsla(var(--h), 100%, 65%, 0.9) 0%, hsla(var(--h), 100%, 60%, 0.45) 45%, hsla(var(--h), 100%, 60%, 0) 70%);
+  filter: blur(6px);
+  opacity: 0;
+  animation: smoke-rise 1.4s ease-out forwards;
+}
+@keyframes smoke-rise {
+  0%   { opacity: 0;   transform: translate(0, 0) scale(0.3); }
+  20%  { opacity: 1; }
+  100% { opacity: 0;   transform: translate(var(--dx), var(--dy)) scale(2.4); }
+}
+.screen { position: relative; }
+.rainbow-flash {
+  position: absolute; inset: 0; pointer-events: none; border-radius: 12px;
+  background: linear-gradient(120deg, rgba(255,77,77,.35), rgba(255,240,77,.35), rgba(77,255,136,.35), rgba(77,195,255,.35), rgba(192,77,255,.35));
+  animation: rainbow-flash 0.9s ease-out forwards;
+}
+@keyframes rainbow-flash { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+.hit-hold-label {
+  position: absolute; left: 0; right: 0; top: 38%; text-align: center; pointer-events: none;
+  font-size: 34px; font-weight: 900; letter-spacing: 3px;
+  background: linear-gradient(90deg, #ff3b3b, #ff9d3b, #ffe93b, #3bff6a, #3bcfff, #6a3bff, #ff3bcf);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 2px #fff) drop-shadow(0 0 6px rgba(255,255,255,.9));
+  animation: hit-hold-label 1.6s ease-out forwards;
+}
+@keyframes hit-hold-label {
+  0%   { opacity: 0; transform: scale(2); }
+  15%  { opacity: 1; transform: scale(1); }
+  75%  { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0; transform: scale(1.1) translateY(-10px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hold.hit-new, .rainbow-smoke .puff, .rainbow-flash, .hit-hold-label { animation: none; }
+  .rainbow-smoke, .rainbow-flash { display: none; }
+}
