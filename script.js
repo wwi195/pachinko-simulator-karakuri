@@ -343,7 +343,7 @@ function handleOpenHold() {
   playHitRipple(idx);
 }
 
-// 当たり保留から、虹色に光る波紋が同じ半径で3重に広がる
+// 当たり保留から、虹色に光る波紋（輪1つ）が広がる
 const HIT_RIPPLE_MS = 1300;
 function playHitRipple(idx) {
   const hold = document.querySelectorAll('#main-screen .hold')[idx];
@@ -355,12 +355,9 @@ function playHitRipple(idx) {
   ripple.className = 'hit-ripple';
   ripple.style.left = (hold.offsetLeft + hold.offsetWidth / 2) + 'px';
   ripple.style.top = (hold.offsetTop + hold.offsetHeight / 2) + 'px';
-  for (let i = 0; i < 3; i++) {
-    const ring = document.createElement('span');
-    ring.className = 'ring';
-    ring.style.animationDelay = (i * 0.18) + 's';
-    ripple.appendChild(ring);
-  }
+  const ring = document.createElement('span');
+  ring.className = 'ring';
+  ripple.appendChild(ring);
   holdsBox.appendChild(ripple);
   setTimeout(() => ripple.remove(), HIT_RIPPLE_MS);
 }
