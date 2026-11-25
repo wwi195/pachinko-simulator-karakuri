@@ -743,13 +743,19 @@ body {
   justify-content: center; text-align: center; min-height: 260px;
   background: radial-gradient(ellipse at center, #3a1450 0%, #170a22 60%, #0b0510 100%);
   border-radius: 14px; padding: 24px 0;
+  overflow: hidden;
 }
 .reach-title {
   font-size: 34px; font-weight: 900; letter-spacing: 4px;
   color: #fff; text-shadow: 0 0 10px #c34dff, 0 0 2px #5a1196;
   margin-bottom: 8px;
-  animation: reach-blink 0.6s ease-in-out infinite alternate;
+  visibility: hidden;
 }
+.reach-title.show {
+  visibility: visible;
+  animation: reach-pop 0.25s ease-out, reach-blink 0.6s ease-in-out 0.25s infinite alternate;
+}
+@keyframes reach-pop { from { transform: scale(1.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 @keyframes reach-blink { from { opacity: 1; } to { opacity: 0.55; } }
 .reach-line { display: flex; align-items: center; justify-content: center; gap: 22px; }
 /* 紫の「4」：ピンク紫〜深い紫のグラデ、白フチ＋黒フチ、斜体で太く */
@@ -769,4 +775,14 @@ body {
   color: rgba(255, 255, 255, 0.28);
   filter: blur(1.5px);
 }
-@media (prefers-reduced-motion: reduce) { .reach-title { animation: none; } }
+/* 右の4：上から降ってきて、止まりそうで止まらない…ゆっくり → 左の4と同じ高さでピタッ */
+.reach-4.reach-fall { animation: reach-fall 1.4s linear both; }
+@keyframes reach-fall {
+  0%   { transform: skewX(-6deg) translateY(-300px); animation-timing-function: ease-in; }
+  35%  { transform: skewX(-6deg) translateY(-60px);  animation-timing-function: ease-out; }
+  70%  { transform: skewX(-6deg) translateY(-14px);  animation-timing-function: ease-in-out; }
+  85%  { transform: skewX(-6deg) translateY(-22px);  animation-timing-function: ease-in; }
+  95%  { transform: skewX(-6deg) translateY(4px); }
+  100% { transform: skewX(-6deg) translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) { .reach-title.show, .reach-4.reach-fall { animation: none; } }

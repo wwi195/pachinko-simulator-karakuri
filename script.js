@@ -224,11 +224,14 @@ function enterRush() {
   setState('rush_idle');
 }
 
-// 運命の一劇の前に「リーチ！ 4○4」を出す（真ん中は薄く数字が回る）。1秒で一劇へ
+// 運命の一劇の前の煽り：右の4が上から降ってきて、左の4と同じ高さで止まる
+//   → 止まったら「リーチ！」→ 1秒で一劇へ（真ん中は薄く数字が回り続ける）
+const REACH_FALL_MS = 1400;  // 右の4が降ってきて止まるまで（style.css の reach-fall と合わせる）
 const ICHIGEKI_REACH_MS = 1000;
 function showIchigekiReach() {
   setState('ichigeki_reach');
   const mid = document.getElementById('reach-mid');
+  const title = document.getElementById('reach-title');
   let n = Math.floor(Math.random() * 10);
   const timer = setInterval(() => {
     if (!mid.isConnected) { clearInterval(timer); return; }
@@ -236,9 +239,13 @@ function showIchigekiReach() {
     mid.textContent = n;
   }, 70);
   setTimeout(() => {
-    clearInterval(timer);
-    if (game.state === 'ichigeki_reach') setState('ichigeki');
-  }, ICHIGEKI_REACH_MS);
+    if (game.state !== 'ichigeki_reach') { clearInterval(timer); return; }
+    title.classList.add('show');
+    setTimeout(() => {
+      clearInterval(timer);
+      if (game.state === 'ichigeki_reach') setState('ichigeki');
+    }, ICHIGEKI_REACH_MS);
+  }, REACH_FALL_MS);
 }
 
 // 1回転処理。画面遷移が起きたら true を返す
@@ -778,9 +785,9 @@ function buildScreen(state) {
 
     case 'ichigeki_reach':
       return `<div class="screen reach-screen">
-        <p class="reach-title">リーチ！</p>
+        <p class="reach-title" id="reach-title">リーチ！</p>
         <div class="reach-line">
-          <span class="reach-4">4</span><span class="reach-mid" id="reach-mid">0</span><span class="reach-4">4</span>
+          <span class="reach-4">4</span><span class="reach-mid" id="reach-mid">0</span><span class="reach-4 reach-fall" id="reach-right">4</span>
         </div>
       </div>`;
 
