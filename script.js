@@ -324,7 +324,6 @@ function handleRushSkip() {
 
 function handleOpenHold() {
   const p = game.pending;
-  if (p.busy) return;
   const idx = p.opened;
   p.opened++;
   const hit = p.result.holds[idx];
@@ -333,52 +332,35 @@ function handleOpenHold() {
     if (last) finishIchigeki(); else render();
     return;
   }
-  // 当たり保留：虹煙エフェクトで派手にアピール。最後の保留なら見せてから結果へ
+  // 当たり保留：光の波紋エフェクトでアピール（ハズレと同じテンポで進める）
+  if (last) { finishIchigeki(); return; }
   render();
-  playRainbowSmoke(idx);
-  if (last) {
-    p.busy = true;
-    setTimeout(() => { if (game.state === 'ichigeki') finishIchigeki(); }, RAINBOW_SMOKE_MS);
-  }
+  playHitRipple(idx);
 }
 
-// 当たり保留に虹色の煙がもくもく立ちのぼり、画面が虹色に光る
-const RAINBOW_SMOKE_MS = 1800;
-function playRainbowSmoke(idx) {
+// 当たり保留から、虹色に光る波紋が同じ半径で3重に広がる
+const HIT_RIPPLE_MS = 1300;
+function playHitRipple(idx) {
   const hold = document.querySelectorAll('#main-screen .hold')[idx];
   if (!hold) return;
   hold.classList.add('hit-new');
-  const screen = hold.closest('.screen');
   const holdsBox = hold.parentElement;
   holdsBox.style.position = 'relative';
-  const smoke = document.createElement('div');
-  smoke.className = 'rainbow-smoke';
-  smoke.style.left = (hold.offsetLeft + hold.offsetWidth / 2) + 'px';
-  smoke.style.top = (hold.offsetTop + hold.offsetHeight / 2) + 'px';
-  const PUFFS = 14;
-  for (let i = 0; i < PUFFS; i++) {
-    const puff = document.createElement('span');
-    puff.className = 'puff';
-    const angle = (i / PUFFS) * Math.PI * 2;
-    puff.style.setProperty('--h', Math.round(i / PUFFS * 360));
-    puff.style.setProperty('--dx', Math.round(Math.cos(angle) * (30 + Math.random() * 30)) + 'px');
-    puff.style.setProperty('--dy', Math.round(-50 - Math.random() * 70 + Math.sin(angle) * 20) + 'px');
-    puff.style.animationDelay = (Math.random() * 0.35).toFixed(2) + 's';
-    smoke.appendChild(puff);
+  const ripple = document.createElement('div');
+  ripple.className = 'hit-ripple';
+  ripple.style.left = (hold.offsetLeft + hold.offsetWidth / 2) + 'px';
+  ripple.style.top = (hold.offsetTop + hold.offsetHeight / 2) + 'px';
+  for (let i = 0; i < 3; i++) {
+    const ring = document.createElement('span');
+    ring.className = 'ring';
+    ring.style.animationDelay = (i * 0.18) + 's';
+    ripple.appendChild(ring);
   }
-  holdsBox.appendChild(smoke);
-  const flash = document.createElement('div');
-  flash.className = 'rainbow-flash';
-  screen.appendChild(flash);
-  const label = document.createElement('p');
-  label.className = 'hit-hold-label';
-  label.textContent = '当たり保留！';
-  screen.appendChild(label);
-  setTimeout(() => { smoke.remove(); flash.remove(); label.remove(); }, RAINBOW_SMOKE_MS);
+  holdsBox.appendChild(ripple);
+  setTimeout(() => ripple.remove(), HIT_RIPPLE_MS);
 }
 
 function handleOpenAllHolds() {
-  if (game.pending.busy) return;
   game.pending.opened = ICHIGEKI_HOLDS;
   finishIchigeki();
 }
