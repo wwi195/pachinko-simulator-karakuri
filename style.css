@@ -785,7 +785,17 @@ body {
   95%  { transform: skewX(-6deg) translateY(4px); }
   100% { transform: skewX(-6deg) translateY(0); }
 }
-@media (prefers-reduced-motion: reduce) { .reach-title.show, .reach-4.reach-fall { animation: none; } }
+/* ガセ：止まる直前（揃う寸前）までは同じ動き → そのまま下へ落ちていく */
+.reach-4.reach-fall-miss { animation: reach-fall-miss 1.9s linear both; }
+@keyframes reach-fall-miss {
+  0%    { transform: skewX(-6deg) translateY(-300px); animation-timing-function: ease-in; }
+  25.8% { transform: skewX(-6deg) translateY(-60px);  animation-timing-function: ease-out; }
+  51.6% { transform: skewX(-6deg) translateY(-14px);  animation-timing-function: ease-in-out; }
+  62.6% { transform: skewX(-6deg) translateY(-22px);  animation-timing-function: ease-in; }
+  70%   { transform: skewX(-6deg) translateY(4px);    animation-timing-function: ease-in; }
+  100%  { transform: skewX(-6deg) translateY(320px); }
+}
+@media (prefers-reduced-motion: reduce) { .reach-title.show, .reach-4.reach-fall, .reach-4.reach-fall-miss { animation: none; } }
 
 /* ---- 一劇の当たり保留：虹煙エフェクト ---- */
 .hold.hit-new { position: relative; z-index: 2; animation: hold-hit-pop 0.6s ease-out, hold-rainbow-glow 0.8s linear 0.6s 2; }

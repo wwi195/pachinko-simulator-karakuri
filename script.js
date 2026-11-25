@@ -229,6 +229,7 @@ function enterRush() {
 const REACH_FALL_MS = 1400;  // 右の4が降ってきて止まるまで（style.css の reach-fall と合わせる）
 const ICHIGEKI_REACH_MS = 1000;
 function showIchigekiReach() {
+  game.reachMiss = false;
   setState('ichigeki_reach');
   const mid = document.getElementById('reach-mid');
   const title = document.getElementById('reach-title');
@@ -248,6 +249,24 @@ function showIchigekiReach() {
   }, REACH_FALL_MS);
 }
 
+// ガセ：途中まで同じ動きで、右の4は止まらずそのまま下へ落ちていく → ST残りから再開
+const REACH_MISS_MS = 2100;  // style.css の reach-fall-miss（1.9秒）＋少しの間
+function showReachMiss() {
+  game.reachMiss = true;
+  setState('ichigeki_reach');
+  const mid = document.getElementById('reach-mid');
+  let n = Math.floor(Math.random() * 10);
+  const timer = setInterval(() => {
+    if (!mid.isConnected) { clearInterval(timer); return; }
+    n = (n + 1) % 10;
+    mid.textContent = n;
+  }, 70);
+  setTimeout(() => {
+    clearInterval(timer);
+    if (game.state === 'ichigeki_reach') setState('rush_idle');
+  }, REACH_MISS_MS);
+}
+
 // 1回転処理。画面遷移が起きたら true を返す
 function runRushSpin(opts = {}) {
   game.rushAllStats.totalSpins++;
@@ -264,6 +283,12 @@ function runRushSpin(opts = {}) {
   if (game.stRemaining <= 0) {
     game.rushAllStats.ends++;
     endSession();
+    return true;
+  }
+  // リーチにならないガセ煽り（一劇と同じ 1/78）：右の4が揃わずに下へ落ちていき、ST残りから再開
+  if (Math.random() < P_ICHIGEKI) {
+    addLog(`ST${spins}回転目 4が落ちてきた…が揃わず`);
+    showReachMiss();
     return true;
   }
   if (!opts.silent) {
@@ -836,7 +861,7 @@ function buildScreen(state) {
       return `<div class="screen reach-screen">
         <p class="reach-title" id="reach-title">リーチ！</p>
         <div class="reach-line">
-          <span class="reach-4">4</span><span class="reach-mid" id="reach-mid">0</span><span class="reach-4 reach-fall" id="reach-right">4</span>
+          <span class="reach-4">4</span><span class="reach-mid" id="reach-mid">0</span><span class="reach-4 ${game.reachMiss ? 'reach-fall-miss' : 'reach-fall'}" id="reach-right">4</span>
         </div>
       </div>`;
 
