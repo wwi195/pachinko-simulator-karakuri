@@ -267,6 +267,11 @@ function showReachMiss() {
   }, REACH_MISS_MS);
 }
 
+// 4が降ってくる煽りのうち、リーチ（一劇）65%：ハズレ 35%。
+// 一劇（1/78）に当たらなかった回転で抽選するので、全体で ハズレ:一劇 = 35:65 になるよう割り戻す
+const REACH_MISS_SHARE = 0.35;
+const P_REACH_MISS = (P_ICHIGEKI * REACH_MISS_SHARE / (1 - REACH_MISS_SHARE)) / (1 - P_ICHIGEKI); // 1/143
+
 // 1回転処理。画面遷移が起きたら true を返す
 function runRushSpin(opts = {}) {
   game.rushAllStats.totalSpins++;
@@ -285,8 +290,8 @@ function runRushSpin(opts = {}) {
     endSession();
     return true;
   }
-  // リーチにならないガセ煽り（一劇と同じ 1/78）：右の4が揃わずに下へ落ちていき、ST残りから再開
-  if (Math.random() < P_ICHIGEKI) {
+  // リーチにならないガセ煽り：右の4が揃わずに下へ落ちていき、ST残りから再開
+  if (Math.random() < P_REACH_MISS) {
     addLog(`ST${spins}回転目 4が落ちてきた…が揃わず`);
     showReachMiss();
     return true;
