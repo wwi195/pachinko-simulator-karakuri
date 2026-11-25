@@ -225,9 +225,9 @@ function enterRush() {
 }
 
 // 運命の一劇の前の煽り：右の4が上から降ってきて、左の4と同じ高さで止まる
-//   → 止まったら「リーチ！」→ 1秒で一劇へ（真ん中は薄く数字が回り続ける）
+//   → 止まったら「リーチ！」→ 0.5秒で一劇へ（真ん中は薄く数字が回り続ける）
 const REACH_FALL_MS = 1400;  // 右の4が降ってきて止まるまで（style.css の reach-fall と合わせる）
-const ICHIGEKI_REACH_MS = 1000;
+const ICHIGEKI_REACH_MS = 500;
 function showIchigekiReach() {
   game.reachMiss = false;
   setState('ichigeki_reach');
